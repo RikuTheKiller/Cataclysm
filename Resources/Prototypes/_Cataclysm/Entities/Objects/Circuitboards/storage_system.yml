@@ -1,0 +1,12 @@
+- type: entity
+  id: StorageSystemControllerCircuitboard
+  parent: BaseMachineCircuitboard
+  name: storage system controller machine board
+  description: A machine printed circuit board for a storage system controller.
+  components:
+    - type: MachineBoard
+      prototype: StorageSystemController
+      stackRequirements:
+        Steel: 5 # Outer frame.
+        Glass: 2 # Screen and buttons.
+        Cable: 10 # Complex internals.

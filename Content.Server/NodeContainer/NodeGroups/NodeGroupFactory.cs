@@ -61,6 +61,7 @@ namespace Content.Server.NodeContainer.NodeGroups
         AMEngine,
         Pipe,
         WireNet,
+        Storage, // Cataclysm addition
 
         /// <summary>
         /// Group used by the TEG.
