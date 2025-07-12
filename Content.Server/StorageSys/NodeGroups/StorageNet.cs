@@ -12,6 +12,7 @@ public sealed partial class StorageNet : BaseNodeGroup
     private StorageNetSystem _storageSystem = default!;
 
     public readonly List<EntityUid> Controllers = [];
+    public readonly List<EntityUid> Containers = [];
 
     public StorageControllerData? ControllerData;
 
