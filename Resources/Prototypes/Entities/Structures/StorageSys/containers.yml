@@ -33,7 +33,7 @@
     containers:
       machine_board: !type:Container
       machine_parts: !type:Container
-      storage: !type:Container
+      storage_container: !type:Container
   - type: NodeContainer
     nodes:
       storage:
