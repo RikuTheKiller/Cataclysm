@@ -24,10 +24,8 @@ public sealed partial class StorageNetSystem : EntitySystem
         args.Net.Containers.Remove(uid);
     }
 
-    public bool TryInsertItem(EntityUid itemUid, StorageNet net, [NotNullWhen(true)] out EntityUid? destinationContainerUid)
+    public bool TryInsertItem(EntityUid itemUid, StorageNet net)
     {
-        destinationContainerUid = null;
-
         if (!TryComp<ItemComponent>(itemUid, out var item))
             return false;
 
@@ -35,12 +33,8 @@ public sealed partial class StorageNetSystem : EntitySystem
         {
             if (!_powerReceiverSystem.IsPowered(containerUid))
                 continue;
-
             if (TryInsertItem(itemUid, containerUid))
-            {
-                destinationContainerUid = containerUid;
                 return true;
-            }
         }
 
         return false;
