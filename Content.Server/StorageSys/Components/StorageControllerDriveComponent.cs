@@ -6,6 +6,6 @@ namespace Content.Server.StorageSys.Components;
 [RegisterComponent]
 public sealed partial class StorageControllerDriveComponent : Component
 {
-    public StorageControllerData Data = new();
+    public StorageControllerData? Data = new();
     public StorageNet? ConnectedNet;
 }

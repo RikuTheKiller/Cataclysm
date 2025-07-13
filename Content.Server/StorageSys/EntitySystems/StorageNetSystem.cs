@@ -18,7 +18,7 @@ public sealed partial class StorageNetSystem : EntitySystem
         base.Initialize();
 
         InitializeControllers();
-        InitializeContainers();
+        InitializeMaterials();
     }
 
     /// <summary>

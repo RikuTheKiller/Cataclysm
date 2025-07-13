@@ -112,6 +112,8 @@ public sealed partial class StorageNetSystem : EntitySystem
             return;
 
         net.ControllerData ??= drive.Data;
+
+        drive.Data = null;
         drive.ConnectedNet = net;
     }
 
@@ -120,9 +122,7 @@ public sealed partial class StorageNetSystem : EntitySystem
         if (drive.ConnectedNet != net)
             return;
 
-        if (net.ControllerData != null)
-            drive.Data = net.ControllerData.Value;
-
+        drive.Data = net.ControllerData?.Copy();
         drive.ConnectedNet = null;
 
         foreach (var uid in net.Controllers)
@@ -130,7 +130,7 @@ public sealed partial class StorageNetSystem : EntitySystem
             if (!TryGetControllerDrive(uid, out var otherDrive))
                 continue;
             if (otherDrive.ConnectedNet == net)
-                return;
+                return; // Another connected drive exists, meaning the StorageNet can still hold data.
         }
 
         net.ControllerData = null;

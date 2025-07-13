@@ -26,6 +26,12 @@ public sealed partial class MaterialStorageComponent : Component
     public int? StorageLimit;
 
     /// <summary>
+    /// How much of each individual material type the storage can store.
+    /// </summary>
+    [DataField]
+    public int? IndividualStorageLimit;
+
+    /// <summary>
     /// Whitelist for specifying the kind of items that can be insert into this entity.
     /// </summary>
     [DataField]

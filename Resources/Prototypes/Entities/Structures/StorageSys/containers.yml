@@ -44,7 +44,7 @@
   parent: BaseStorageContainer
   id: StorageContainer
   name: storage container
-  description: Can store a good number of items.
+  description: Can store a massive number of items.
   components:
   - type: Sprite
     sprite: Structures/StorageSys/Containers/small_storage_container.rsi
@@ -56,11 +56,10 @@
         shape:
           !type:PhysShapeAabb
           bounds: "-0.5,-0.5,0.5,0.5"
-        density: 10000 # 40000 kg, or 10 plastitanium walls.
+        density: 10000 # 10000 kg, or 2.5 plastitanium walls.
         mask:
         - MachineMask
         layer:
         - MachineLayer
-  - type : StorageContainer
-    capacity: 1000
-    whitelist: Ore
+  - type: MaterialStorageContainer
+    capacity: 5000 # 50 stacks
