@@ -33,7 +33,6 @@
     containers:
       machine_board: !type:Container
       machine_parts: !type:Container
-      storage_container: !type:Container
   - type: NodeContainer
     nodes:
       storage:
@@ -42,9 +41,9 @@
 
 - type: entity
   parent: BaseStorageContainer
-  id: StorageContainer
-  name: storage container
-  description: Can store a massive number of items.
+  id: MaterialStorageContainer
+  name: material storage container
+  description: Can store a lot of materials, ranging from ores to sheets.
   components:
   - type: Sprite
     sprite: Structures/StorageSys/Containers/small_storage_container.rsi
