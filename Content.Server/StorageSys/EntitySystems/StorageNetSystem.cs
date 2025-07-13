@@ -3,6 +3,7 @@ using Content.Server.NodeContainer;
 using Content.Server.Power.EntitySystems;
 using Content.Server.StorageSys.Events;
 using Content.Server.StorageSys.NodeGroups;
+using Content.Shared.Stacks;
 using Robust.Server.Containers;
 
 namespace Content.Server.StorageSys.EntitySystems;
@@ -12,6 +13,7 @@ public sealed partial class StorageNetSystem : EntitySystem
     [Dependency] private readonly PowerReceiverSystem _powerReceiverSystem = default!;
     [Dependency] private readonly ContainerSystem _containerSystem = default!;
     [Dependency] private readonly SharedAppearanceSystem _sharedAppearanceSystem = default!;
+    [Dependency] private readonly SharedStackSystem _sharedStackSystem = default!;
 
     public override void Initialize()
     {
