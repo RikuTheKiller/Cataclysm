@@ -11,16 +11,16 @@ public sealed partial class StorageNetSystem : EntitySystem
 {
     public void InitializeMaterials()
     {
-        SubscribeLocalEvent<MaterialStorageContainerComponent, StorageNetLoadNodeEvent>(OnMaterialContainerLoadNode);
-        SubscribeLocalEvent<MaterialStorageContainerComponent, StorageNetRemoveNodeEvent>(OnMaterialContainerRemoveNode);
+        SubscribeLocalEvent<MaterialStorageContainerComponent, StorageNetLoadNodeEvent>(OnMaterialStorageContainerLoadNode);
+        SubscribeLocalEvent<MaterialStorageContainerComponent, StorageNetRemoveNodeEvent>(OnMaterialStorageContainerRemoveNode);
     }
 
-    public void OnMaterialContainerLoadNode(EntityUid uid, MaterialStorageContainerComponent comp, StorageNetLoadNodeEvent args)
+    public void OnMaterialStorageContainerLoadNode(EntityUid uid, MaterialStorageContainerComponent comp, StorageNetLoadNodeEvent args)
     {
         args.Net.MaterialContainers.Add(uid);
     }
 
-    public void OnMaterialContainerRemoveNode(EntityUid uid, MaterialStorageContainerComponent comp, StorageNetRemoveNodeEvent args)
+    public void OnMaterialStorageContainerRemoveNode(EntityUid uid, MaterialStorageContainerComponent comp, StorageNetRemoveNodeEvent args)
     {
         args.Net.MaterialContainers.Remove(uid);
     }
@@ -178,7 +178,7 @@ public sealed partial class StorageNetSystem : EntitySystem
         foreach (var materialPair in entity.Comp1.MaterialComposition)
         {
             if (materialPair.Value <= 0)
-                throw new InvalidOperationException($"Material '{materialPair.Key}' has an invalid per-unit value of '{materialPair.Value}'");
+                throw new InvalidOperationException($"Material '{materialPair.Key}' has an invalid unit value of '{materialPair.Value}'");
 
             var stackAmount = materialPair.Value * maxInsertions;
             var maxChange = GetMaxMaterialChange(materialPair.Key, stackAmount, net);
