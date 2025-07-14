@@ -47,7 +47,7 @@ public sealed partial class StorageNetSystem : EntitySystem
     {
         var remainder = amount;
 
-        foreach (var containerUid in net.MaterialContainers)
+        foreach (var containerUid in net.ItemContainers)
         {
             remainder -= TryChangeItemCount(item, remainder, containerUid);
 
@@ -62,7 +62,7 @@ public sealed partial class StorageNetSystem : EntitySystem
     {
         if (!Resolve(containerUid, ref container))
             return 0;
-        if (!_prototypeManager.TryIndex<EntityPrototype>(item, out var itemPrototype))
+        if (!_prototypeManager.TryIndex(item, out var itemPrototype))
             return 0;
         if (!itemPrototype.TryGetComponent<ItemComponent>(out var itemComponent, _componentFactory))
             return 0;
@@ -72,7 +72,10 @@ public sealed partial class StorageNetSystem : EntitySystem
         var existingAmount = container.Storage.GetValueOrDefault(item);
         var finalAmount = Math.Clamp(existingAmount + amount, 0, container.Capacity / sizePrototype.Weight);
 
-        container.Storage[item] = finalAmount;
+        if (finalAmount == 0)
+            container.Storage.Remove(item);
+        else
+            container.Storage[item] = finalAmount;
 
         return finalAmount - existingAmount;
     }
@@ -99,7 +102,7 @@ public sealed partial class StorageNetSystem : EntitySystem
     {
         var remainder = amount;
 
-        foreach (var containerUid in net.MaterialContainers)
+        foreach (var containerUid in net.ItemContainers)
         {
             remainder -= TryChangeItemStackCount(stack, remainder, containerUid);
 
@@ -114,11 +117,13 @@ public sealed partial class StorageNetSystem : EntitySystem
     {
         if (!Resolve(containerUid, ref container))
             return 0;
-        if (!_prototypeManager.TryIndex<EntityPrototype>(stack, out var stackPrototype))
+        if (!_prototypeManager.TryIndex(stack, out var stackPrototype))
             return 0;
-        if (!stackPrototype.TryGetComponent<ItemComponent>(out var itemComponent, _componentFactory))
+        if (!_prototypeManager.TryIndex(stackPrototype.Spawn, out var itemPrototype))
             return 0;
-        if (!stackPrototype.TryGetComponent<StackComponent>(out var stackComponent, _componentFactory))
+        if (!itemPrototype.TryGetComponent<ItemComponent>(out var itemComponent, _componentFactory))
+            return 0;
+        if (!itemPrototype.TryGetComponent<StackComponent>(out var stackComponent, _componentFactory))
             return 0;
         if (!_prototypeManager.TryIndex(itemComponent.Size, out var sizePrototype))
             return 0;
@@ -126,7 +131,10 @@ public sealed partial class StorageNetSystem : EntitySystem
         var existingAmount = container.StackStorage.GetValueOrDefault(stack);
         var finalAmount = Math.Clamp(existingAmount + amount, 0, container.Capacity * _sharedStackSystem.GetMaxCount(stackComponent) / sizePrototype.Weight);
 
-        container.StackStorage[stack] = finalAmount;
+        if (finalAmount == 0)
+            container.StackStorage.Remove(stack);
+        else
+            container.StackStorage[stack] = finalAmount;
 
         return finalAmount - existingAmount;
     }

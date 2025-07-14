@@ -112,7 +112,10 @@ public sealed partial class StorageNetSystem : EntitySystem
         var existingAmount = container.Storage.GetValueOrDefault(material);
         var finalAmount = Math.Clamp(existingAmount + amount, 0, container.Capacity);
 
-        container.Storage[material] = finalAmount;
+        if (finalAmount == 0)
+            container.Storage.Remove(material);
+        else
+            container.Storage[material] = finalAmount;
 
         return finalAmount - existingAmount;
     }
