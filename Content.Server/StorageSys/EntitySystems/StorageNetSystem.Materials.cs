@@ -192,7 +192,7 @@ public sealed partial class StorageNetSystem : EntitySystem
                 return 0;
         }
 
-        if (!_sharedStackSystem.Use(entity, maxInsertions, entity.Comp2))
+        if (!_stackSystem.Use(entity, maxInsertions, entity.Comp2))
             return 0;
 
         foreach (var materialPair in entity.Comp1.MaterialComposition)

@@ -4,6 +4,7 @@
   name: fuel-grade plasma
   icon: { sprite: _NF/Objects/Specific/Fuel/fuelgrade_material.rsi, state: plasma }
   price: 0.1 # half of regular plasma
+  marketPrice: 10
 
 - type: material
   id: FuelGradeUranium
@@ -11,6 +12,7 @@
   name: fuel-grade uranium
   icon: { sprite: _NF/Objects/Specific/Fuel/fuelgrade_material.rsi, state: uranium }
   price: 0.1 # half of regular uranium
+  marketPrice: 10
 
 - type: material
   id: FuelGradeBananium
@@ -18,3 +20,4 @@
   name: fuel-grade bananium
   icon: { sprite: _NF/Objects/Specific/Fuel/fuelgrade_material.rsi, state: bananium }
   price: 0.1 # half of regular bananium
+  marketPrice: 10

@@ -129,7 +129,7 @@ public sealed partial class StorageNetSystem : EntitySystem
             return 0;
 
         var existingAmount = container.StackStorage.GetValueOrDefault(stack);
-        var finalAmount = Math.Clamp(existingAmount + amount, 0, container.Capacity * _sharedStackSystem.GetMaxCount(stackComponent) / sizePrototype.Weight);
+        var finalAmount = Math.Clamp(existingAmount + amount, 0, container.Capacity * _stackSystem.GetMaxCount(stackComponent) / sizePrototype.Weight);
 
         if (finalAmount == 0)
             container.StackStorage.Remove(stack);

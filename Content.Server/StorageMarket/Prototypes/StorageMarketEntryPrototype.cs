@@ -16,9 +16,6 @@ public sealed partial class StorageMarketEntryPrototype : IPrototype
     [DataField]
     public ProtoId<StackPrototype>? StackPrototype { get; private set; }
 
-    [DataField]
-    public double? PriceOverride { get; private set; }
-
     [DataField(required: true)]
     public StorageMarketCategories Categories { get; private set; }
 

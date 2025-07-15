@@ -4,3 +4,4 @@
   name: prize ticket
   icon: { sprite: _NF/Objects/Fun/prizeticket.rsi, state: ticket }
   price: 0
+  marketPrice: 0

@@ -102,6 +102,7 @@
   stackEntity: SpaceCashCounterfeit
   icon: { sprite: _NF/Objects/Economy/counterfeit_cash.rsi, state: cash }
   price: 0
+  marketPrice: 0
 
 - type: stack
   id: CreditCounterfeit
