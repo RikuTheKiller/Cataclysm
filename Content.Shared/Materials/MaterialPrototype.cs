@@ -56,11 +56,5 @@ namespace Content.Shared.Materials
         /// </summary>
         [DataField(required: true)]
         public double Price = 0;
-
-        /// <summary>
-        /// The market price per m^3. (per 100 units)
-        /// </summary>
-        [DataField(required: true)]
-        public int MarketPrice = 0;
     }
 }

@@ -1,6 +1,7 @@
 using Content.Server._NF.CrateMachine;
 using Content.Server.Power.EntitySystems;
 using Content.Server.Stack;
+using Robust.Server.Containers;
 using Robust.Server.GameObjects;
 using Robust.Shared.Prototypes;
 
@@ -15,6 +16,7 @@ public sealed partial class StorageMarketSystem : EntitySystem
     [Dependency] private readonly PrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IComponentFactory _componentFactory = default!;
     [Dependency] private readonly StackSystem _stackSystem = default!;
+    [Dependency] private readonly ContainerSystem _containerSystem = default!;
 
     public override void Initialize()
     {

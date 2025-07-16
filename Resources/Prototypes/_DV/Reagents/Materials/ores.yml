@@ -6,4 +6,3 @@
   icon: { sprite: Nyanotrasen/Objects/Materials/materials.rsi, state: bluespace } # TODO actual ore sprite
   color: "#53a9ff"
   price: 7.5
-  marketPrice: 750

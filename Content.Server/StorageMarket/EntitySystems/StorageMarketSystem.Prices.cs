@@ -1,4 +1,5 @@
 using Content.Shared.Materials;
+using Content.Shared.Stacks;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.StorageMarket.EntitySystems;
@@ -12,16 +13,42 @@ public sealed partial class StorageMarketSystem : EntitySystem
         if (!prototype.TryGetComponent<PhysicalCompositionComponent>(out var physicalComposition, _componentFactory))
             return 0;
 
-        var price = 0;
+        return GetPrice(physicalComposition);
+    }
+
+    public int GetPrice(EntityUid uid)
+    {
+        var total = 0;
+
+        foreach (var entityUid in _containerSystem.GetContentsAndSelf(uid))
+            if (TryComp<PhysicalCompositionComponent>(entityUid, out var physicalComposition))
+                total += GetPrice(entityUid, physicalComposition);
+
+        return total;
+    }
+
+    public int GetPrice(EntityUid uid, PhysicalCompositionComponent physicalComposition)
+    {
+        var price = GetPrice(physicalComposition);
+
+        if (TryComp<StackComponent>(uid, out var stack))
+            price *= stack.Count;
+
+        return price;
+    }
+
+    public int GetPrice(PhysicalCompositionComponent physicalComposition)
+    {
+        var price = 0.0;
 
         foreach (var materialPair in physicalComposition.MaterialComposition)
         {
             if (!_prototypeManager.TryIndex<MaterialPrototype>(materialPair.Key, out var materialPrototype))
                 continue;
 
-            price += materialPrototype.MarketPrice * materialPair.Value;
+            price += materialPrototype.Price * materialPair.Value;
         }
 
-        return price / 100; // MarketPrice is per 100 units.
+        return (int)price;
     }
 }

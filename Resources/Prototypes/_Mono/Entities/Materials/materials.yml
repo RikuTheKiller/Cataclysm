@@ -10,7 +10,6 @@
   icon: { sprite: /Textures/_Mono/Objects/Materials/synthalloy.rsi, state: synthalloy }
   color: "#FFFFFF"
   price: 5 # 500/sheet
-  marketPrice: 500
 
 - type: entity
   parent: MaterialBase
