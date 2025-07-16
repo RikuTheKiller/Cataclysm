@@ -3,6 +3,7 @@ using Content.Server.StorageSys.Events;
 using Content.Server.StorageSys.NodeGroups;
 using Content.Shared.Item;
 using Content.Shared.Stacks;
+using Content.Shared.StorageMarket.Prototypes;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.StorageSys.EntitySystems;
@@ -25,131 +26,80 @@ public sealed partial class StorageNetSystem : EntitySystem
         args.Net.ItemContainers.Remove(uid);
     }
 
-    public IEnumerable<(EntProtoId, int)> GetItems(StorageNet net)
+    public IEnumerable<(ProtoId<StorageEntryPrototype>, int)> GetEntries(StorageNet net)
     {
         foreach (var containerUid in net.ItemContainers)
-            foreach (var itemPair in GetItems(containerUid))
-                yield return itemPair;
+            foreach (var storagePair in GetEntries(containerUid))
+                yield return storagePair;
     }
 
-    public IEnumerable<(EntProtoId, int)> GetItems(EntityUid containerUid, ItemStorageContainerComponent? container = null)
+    public IEnumerable<(ProtoId<StorageEntryPrototype>, int)> GetEntries(EntityUid containerUid, ItemStorageContainerComponent? container = null)
     {
         if (!Resolve(containerUid, ref container))
             yield break;
 
-        foreach (var itemPair in container.Storage)
-            yield return (itemPair.Key, itemPair.Value);
+        foreach (var storagePair in container.Storage)
+            yield return (storagePair.Key, storagePair.Value);
     }
 
-    public int GetItemCount(EntProtoId item, StorageNet net)
+    public int GetEntryCount(ProtoId<StorageEntryPrototype> entry, StorageNet net)
     {
         var total = 0;
 
         foreach (var containerUid in net.ItemContainers)
-            total += GetItemCount(item, containerUid);
+            total += GetEntryCount(entry, containerUid);
 
         return total;
     }
 
-    public int GetItemCount(EntProtoId item, EntityUid containerUid, ItemStorageContainerComponent? container = null)
+    public int GetEntryCount(ProtoId<StorageEntryPrototype> entry, EntityUid containerUid, ItemStorageContainerComponent? container = null)
     {
         if (!Resolve(containerUid, ref container))
             return 0;
 
-        return container.Storage.GetValueOrDefault(item);
+        return container.Storage.GetValueOrDefault(entry);
     }
 
-    public int TryChangeItemCount(EntProtoId item, int amount, StorageNet net)
+    public int GetEntryMaxCount(ProtoId<StorageEntryPrototype> entry, StorageNet net)
     {
-        var remainder = amount;
+        var total = 0;
 
         foreach (var containerUid in net.ItemContainers)
-        {
-            remainder -= TryChangeItemCount(item, remainder, containerUid);
+            total += GetEntryMaxCount(entry, containerUid);
 
-            if (remainder == 0)
-                return amount;
-        }
-
-        return amount - remainder;
+        return total;
     }
 
-    public int TryChangeItemCount(EntProtoId item, int amount, EntityUid containerUid, ItemStorageContainerComponent? container = null)
+    public int GetEntryMaxCount(ProtoId<StorageEntryPrototype> entry, EntityUid containerUid, ItemStorageContainerComponent? container = null)
     {
         if (!Resolve(containerUid, ref container))
             return 0;
-        if (!_prototypeManager.TryIndex(item, out var itemPrototype))
+        if (!_prototypeManager.TryIndex(entry, out var entryPrototype))
+            return 0;
+
+        if (entryPrototype.Prototype != null)
+            return GetItemMaxCount(entryPrototype.Prototype.Value, container);
+        if (entryPrototype.StackPrototype != null)
+            return GetStackMaxCount(entryPrototype.StackPrototype.Value, container);
+
+        return 0;
+    }
+
+    private int GetItemMaxCount(EntProtoId protoId, ItemStorageContainerComponent container)
+    {
+        if (!_prototypeManager.TryIndex(protoId, out var itemPrototype))
             return 0;
         if (!itemPrototype.TryGetComponent<ItemComponent>(out var itemComponent, _componentFactory))
             return 0;
         if (!_prototypeManager.TryIndex(itemComponent.Size, out var sizePrototype))
             return 0;
 
-        var existingAmount = container.Storage.GetValueOrDefault(item);
-        var finalAmount = Math.Clamp(existingAmount + amount, 0, container.Capacity / sizePrototype.Weight);
-
-        if (finalAmount == 0)
-            container.Storage.Remove(item);
-        else
-            container.Storage[item] = finalAmount;
-
-        return finalAmount - existingAmount;
+        return container.Capacity / sizePrototype.Weight;
     }
 
-    public IEnumerable<(ProtoId<StackPrototype>, int)> GetItemStacks(StorageNet net)
+    private int GetStackMaxCount(ProtoId<StackPrototype> protoId, ItemStorageContainerComponent container)
     {
-        foreach (var containerUid in net.ItemContainers)
-            foreach (var stackPair in GetItemStacks(containerUid))
-                yield return stackPair;
-    }
-
-    public IEnumerable<(ProtoId<StackPrototype>, int)> GetItemStacks(EntityUid containerUid, ItemStorageContainerComponent? container = null)
-    {
-        if (!Resolve(containerUid, ref container))
-            yield break;
-
-        foreach (var stackPair in container.StackStorage)
-            yield return (stackPair.Key, stackPair.Value);
-    }
-
-    public int GetItemStackCount(ProtoId<StackPrototype> stack, StorageNet net)
-    {
-        var total = 0;
-
-        foreach (var containerUid in net.ItemContainers)
-            total += GetItemStackCount(stack, containerUid);
-
-        return total;
-    }
-
-    public int GetItemStackCount(ProtoId<StackPrototype> stack, EntityUid containerUid, ItemStorageContainerComponent? container = null)
-    {
-        if (!Resolve(containerUid, ref container))
-            return 0;
-
-        return container.StackStorage.GetValueOrDefault(stack);
-    }
-
-    public int TryChangeItemStackCount(ProtoId<StackPrototype> stack, int amount, StorageNet net)
-    {
-        var remainder = amount;
-
-        foreach (var containerUid in net.ItemContainers)
-        {
-            remainder -= TryChangeItemStackCount(stack, remainder, containerUid);
-
-            if (remainder == 0)
-                return amount;
-        }
-
-        return amount - remainder;
-    }
-
-    public int TryChangeItemStackCount(ProtoId<StackPrototype> stack, int amount, EntityUid containerUid, ItemStorageContainerComponent? container = null)
-    {
-        if (!Resolve(containerUid, ref container))
-            return 0;
-        if (!_prototypeManager.TryIndex(stack, out var stackPrototype))
+        if (!_prototypeManager.TryIndex(protoId, out var stackPrototype))
             return 0;
         if (!_prototypeManager.TryIndex(stackPrototype.Spawn, out var itemPrototype))
             return 0;
@@ -160,13 +110,36 @@ public sealed partial class StorageNetSystem : EntitySystem
         if (!_prototypeManager.TryIndex(itemComponent.Size, out var sizePrototype))
             return 0;
 
-        var existingAmount = container.StackStorage.GetValueOrDefault(stack);
-        var finalAmount = Math.Clamp(existingAmount + amount, 0, container.Capacity * _stackSystem.GetMaxCount(stackComponent) / sizePrototype.Weight);
+        return container.Capacity * _stackSystem.GetMaxCount(stackComponent) / sizePrototype.Weight;
+    }
+
+    public int TryChangeEntryCount(ProtoId<StorageEntryPrototype> entry, int amount, StorageNet net)
+    {
+        var remainder = amount;
+
+        foreach (var containerUid in net.ItemContainers)
+        {
+            remainder -= TryChangeEntryCount(entry, remainder, containerUid);
+
+            if (remainder == 0)
+                return amount;
+        }
+
+        return amount - remainder;
+    }
+
+    public int TryChangeEntryCount(ProtoId<StorageEntryPrototype> entry, int amount, EntityUid containerUid, ItemStorageContainerComponent? container = null)
+    {
+        if (!Resolve(containerUid, ref container))
+            return 0;
+
+        var existingAmount = container.Storage.GetValueOrDefault(entry);
+        var finalAmount = Math.Clamp(existingAmount + amount, 0, GetEntryMaxCount(entry, containerUid, container));
 
         if (finalAmount == 0)
-            container.StackStorage.Remove(stack);
+            container.Storage.Remove(entry);
         else
-            container.StackStorage[stack] = finalAmount;
+            container.Storage[entry] = finalAmount;
 
         return finalAmount - existingAmount;
     }

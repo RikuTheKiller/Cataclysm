@@ -35,9 +35,8 @@ public sealed partial class StorageMarketSystem : EntitySystem
         List<StorageMarketEntry> entries = new();
 
         foreach (var protoId in marketData.Entries)
-        {
-            if ()
-        }
+            if (TryCreateEntry(protoId, net, out var entry))
+                entries.Add(entry.Value);
     }
 
     public bool TryCreateEntry(ProtoId<StorageEntryPrototype> protoId, StorageNet net, [NotNullWhen(true)] out StorageMarketEntry? entry)
@@ -49,17 +48,7 @@ public sealed partial class StorageMarketSystem : EntitySystem
         if (entryPrototype.Prototype == null && entryPrototype.StackPrototype == null)
             return false;
 
-        entry = new(entryPrototype, GetPrice(entryPrototype), GetQuantity(entryPrototype, net), false);
+        entry = new(entryPrototype, GetPrice(entryPrototype), _storageNetSystem.GetEntryCount(entryPrototype, net), false);
         return true;
-    }
-
-    public int GetQuantity(StorageEntryPrototype entryPrototype, StorageNet net)
-    {
-        if (entryPrototype.Prototype != null)
-            return _storageNetSystem.GetItemCount(entryPrototype.Prototype.Value, net);
-        if (entryPrototype.StackPrototype != null)
-            return _storageNetSystem.GetItemStackCount(entryPrototype.StackPrototype.Value, net);
-
-        return 0;
     }
 }
