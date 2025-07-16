@@ -9,20 +9,36 @@ namespace Content.Server.StorageSys.EntitySystems;
 
 public sealed partial class StorageNetSystem : EntitySystem
 {
-    public void InitializeItems()
+    private void InitializeItems()
     {
         SubscribeLocalEvent<ItemStorageContainerComponent, StorageNetLoadNodeEvent>(OnItemStorageContainerLoadNode);
         SubscribeLocalEvent<ItemStorageContainerComponent, StorageNetRemoveNodeEvent>(OnItemStorageContainerRemoveNode);
     }
 
-    public void OnItemStorageContainerLoadNode(EntityUid uid, ItemStorageContainerComponent comp, StorageNetLoadNodeEvent args)
+    private void OnItemStorageContainerLoadNode(EntityUid uid, ItemStorageContainerComponent comp, StorageNetLoadNodeEvent args)
     {
         args.Net.ItemContainers.Add(uid);
     }
 
-    public void OnItemStorageContainerRemoveNode(EntityUid uid, ItemStorageContainerComponent comp, StorageNetRemoveNodeEvent args)
+    private void OnItemStorageContainerRemoveNode(EntityUid uid, ItemStorageContainerComponent comp, StorageNetRemoveNodeEvent args)
     {
         args.Net.ItemContainers.Remove(uid);
+    }
+
+    public IEnumerable<(EntProtoId, int)> GetItems(StorageNet net)
+    {
+        foreach (var containerUid in net.ItemContainers)
+            foreach (var itemPair in GetItems(containerUid))
+                yield return itemPair;
+    }
+
+    public IEnumerable<(EntProtoId, int)> GetItems(EntityUid containerUid, ItemStorageContainerComponent? container = null)
+    {
+        if (!Resolve(containerUid, ref container))
+            yield break;
+
+        foreach (var itemPair in container.Storage)
+            yield return (itemPair.Key, itemPair.Value);
     }
 
     public int GetItemCount(EntProtoId item, StorageNet net)
@@ -78,6 +94,22 @@ public sealed partial class StorageNetSystem : EntitySystem
             container.Storage[item] = finalAmount;
 
         return finalAmount - existingAmount;
+    }
+
+    public IEnumerable<(ProtoId<StackPrototype>, int)> GetItemStacks(StorageNet net)
+    {
+        foreach (var containerUid in net.ItemContainers)
+            foreach (var stackPair in GetItemStacks(containerUid))
+                yield return stackPair;
+    }
+
+    public IEnumerable<(ProtoId<StackPrototype>, int)> GetItemStacks(EntityUid containerUid, ItemStorageContainerComponent? container = null)
+    {
+        if (!Resolve(containerUid, ref container))
+            yield break;
+
+        foreach (var stackPair in container.StackStorage)
+            yield return (stackPair.Key, stackPair.Value);
     }
 
     public int GetItemStackCount(ProtoId<StackPrototype> stack, StorageNet net)

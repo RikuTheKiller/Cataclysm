@@ -1,5 +1,4 @@
-using Content.Server.StorageMarket.Data;
-using Content.Shared.Stacks;
+using Content.Shared.StorageMarket.Prototypes;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.StorageSys.Components;
@@ -7,8 +6,7 @@ namespace Content.Server.StorageSys.Components;
 [RegisterComponent]
 public sealed partial class ItemStorageContainerComponent : Component
 {
-    public Dictionary<EntProtoId, int> Storage = [];
-    public Dictionary<ProtoId<StackPrototype>, int> StackStorage = [];
+    public Dictionary<ProtoId<StorageEntryPrototype>, int> Storage = [];
 
     /// <summary>
     /// Per-item maximum storage capacity. A tiny item consumes 1 capacity, small 2, normal 4, so on and so forth.

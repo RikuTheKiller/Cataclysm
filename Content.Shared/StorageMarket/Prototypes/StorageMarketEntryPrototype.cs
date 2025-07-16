@@ -1,11 +1,11 @@
-using Content.Server.StorageMarket.Data;
 using Content.Shared.Stacks;
+using Content.Shared.StorageMarket.Data;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server.StorageMarket.Prototypes;
+namespace Content.Shared.StorageMarket.Prototypes;
 
 [Prototype]
-public sealed partial class StorageMarketEntryPrototype : IPrototype
+public sealed partial class StorageEntryPrototype : IPrototype
 {
     [ViewVariables, IdDataField]
     public string ID { get; private set; } = default!;

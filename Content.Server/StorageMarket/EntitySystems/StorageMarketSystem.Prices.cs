@@ -1,16 +1,39 @@
 using Content.Shared.Materials;
 using Content.Shared.Stacks;
+using Content.Shared.StorageMarket.Prototypes;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.StorageMarket.EntitySystems;
 
 public sealed partial class StorageMarketSystem : EntitySystem
 {
+    public int GetPrice(StorageEntryPrototype prototype)
+    {
+        if (prototype.Prototype != null)
+            return GetPrice(prototype.Prototype.Value);
+        if (prototype.StackPrototype != null)
+            return GetPrice(prototype.StackPrototype.Value);
+
+        return 0;
+    }
+
     public int GetPrice(EntProtoId prototypeId)
     {
-        if (!_prototypeManager.TryIndex<EntityPrototype>(prototypeId, out var prototype))
+        if (!_prototypeManager.TryIndex(prototypeId, out var prototype))
             return 0;
         if (!prototype.TryGetComponent<PhysicalCompositionComponent>(out var physicalComposition, _componentFactory))
+            return 0;
+
+        return GetPrice(physicalComposition);
+    }
+
+    public int GetPrice(ProtoId<StackPrototype> prototypeId)
+    {
+        if (!_prototypeManager.TryIndex(prototypeId, out var stackPrototype))
+            return 0;
+        if (!_prototypeManager.TryIndex(stackPrototype.Spawn, out var entityPrototype))
+            return 0;
+        if (!entityPrototype.TryGetComponent<PhysicalCompositionComponent>(out var physicalComposition, _componentFactory))
             return 0;
 
         return GetPrice(physicalComposition);

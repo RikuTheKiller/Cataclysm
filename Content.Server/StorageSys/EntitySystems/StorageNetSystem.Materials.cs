@@ -9,18 +9,18 @@ namespace Content.Server.StorageSys.EntitySystems;
 
 public sealed partial class StorageNetSystem : EntitySystem
 {
-    public void InitializeMaterials()
+    private void InitializeMaterials()
     {
         SubscribeLocalEvent<MaterialStorageContainerComponent, StorageNetLoadNodeEvent>(OnMaterialStorageContainerLoadNode);
         SubscribeLocalEvent<MaterialStorageContainerComponent, StorageNetRemoveNodeEvent>(OnMaterialStorageContainerRemoveNode);
     }
 
-    public void OnMaterialStorageContainerLoadNode(EntityUid uid, MaterialStorageContainerComponent comp, StorageNetLoadNodeEvent args)
+    private void OnMaterialStorageContainerLoadNode(EntityUid uid, MaterialStorageContainerComponent comp, StorageNetLoadNodeEvent args)
     {
         args.Net.MaterialContainers.Add(uid);
     }
 
-    public void OnMaterialStorageContainerRemoveNode(EntityUid uid, MaterialStorageContainerComponent comp, StorageNetRemoveNodeEvent args)
+    private void OnMaterialStorageContainerRemoveNode(EntityUid uid, MaterialStorageContainerComponent comp, StorageNetRemoveNodeEvent args)
     {
         args.Net.MaterialContainers.Remove(uid);
     }

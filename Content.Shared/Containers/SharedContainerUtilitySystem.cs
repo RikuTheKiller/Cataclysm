@@ -2,7 +2,7 @@ using Robust.Shared.Containers;
 
 namespace Content.Shared.Containers;
 
-public sealed partial class SharedContainerUtilitiesSystem : EntitySystem
+public sealed partial class SharedContainerUtilitySystem : EntitySystem
 {
     /// <summary>
     /// Enumerates over all contents within the entity.
@@ -12,7 +12,7 @@ public sealed partial class SharedContainerUtilitiesSystem : EntitySystem
         if (!TryComp<ContainerManagerComponent>(entity, out var containerManager))
             yield break;
 
-        List<EntityUid> stack = [];
+        List<EntityUid> stack = new();
 
         foreach (var container in containerManager.Containers.Values)
             stack.AddRange(container.ContainedEntities);
@@ -36,7 +36,7 @@ public sealed partial class SharedContainerUtilitiesSystem : EntitySystem
     /// </summary>
     public IEnumerable<EntityUid> GetContentsAndSelf(EntityUid entity)
     {
-        List<EntityUid> stack = [entity];
+        List<EntityUid> stack = new() { entity };
 
         while (stack.Count > 0)
         {
