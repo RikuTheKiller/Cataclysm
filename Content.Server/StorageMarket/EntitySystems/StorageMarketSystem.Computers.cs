@@ -48,7 +48,7 @@ public sealed partial class StorageMarketSystem : EntitySystem
         if (entryPrototype.Prototype == null && entryPrototype.StackPrototype == null)
             return false;
 
-        entry = new(entryPrototype, GetPrice(entryPrototype), _storageNetSystem.GetEntryCount(entryPrototype, net), false);
+        entry = new(entryPrototype, GetBasePrice(entryPrototype), _storageNetSystem.GetEntryCount(protoId, net), false);
         return true;
     }
 }

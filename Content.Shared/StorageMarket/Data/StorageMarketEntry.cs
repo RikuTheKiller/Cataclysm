@@ -21,7 +21,7 @@ public readonly struct StorageMarketEntry
     public readonly StorageMarketDepartments Departments;
 
     [ViewVariables]
-    public readonly int Price;
+    public readonly int BasePrice;
 
     [ViewVariables]
     public readonly int Quantity;
@@ -29,13 +29,13 @@ public readonly struct StorageMarketEntry
     [ViewVariables]
     public readonly bool IsCraftable;
 
-    public StorageMarketEntry(StorageEntryPrototype prototype, int price, int quantity, bool isCraftable)
+    public StorageMarketEntry(StorageEntryPrototype prototype, int basePrice, int quantity, bool isCraftable)
     {
         Prototype = prototype.Prototype;
         StackPrototype = prototype.StackPrototype;
         Categories = prototype.Categories;
         Departments = prototype.Departments;
-        Price = price;
+        BasePrice = basePrice;
         Quantity = quantity;
         IsCraftable = isCraftable;
     }
