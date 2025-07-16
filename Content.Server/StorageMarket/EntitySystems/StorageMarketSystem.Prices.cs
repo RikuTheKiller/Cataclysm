@@ -20,7 +20,7 @@ public sealed partial class StorageMarketSystem : EntitySystem
     {
         var total = 0;
 
-        foreach (var entityUid in _containerSystem.GetContentsAndSelf(uid))
+        foreach (var entityUid in _sharedContainerUtilitiesSystem.GetContentsAndSelf(uid))
             if (TryComp<PhysicalCompositionComponent>(entityUid, out var physicalComposition))
                 total += GetPrice(entityUid, physicalComposition);
 
