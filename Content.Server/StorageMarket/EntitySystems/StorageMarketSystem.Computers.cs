@@ -16,7 +16,7 @@ public sealed partial class StorageMarketSystem : EntitySystem
         SubscribeLocalEvent<StorageMarketComputerComponent, BoundUIOpenedEvent>(OnComputerUIOpened);
     }
 
-    public void OnComputerUIOpened(EntityUid uid, StorageMarketComputerComponent comp, BoundUIOpenedEvent args)
+    private void OnComputerUIOpened(EntityUid uid, StorageMarketComputerComponent comp, BoundUIOpenedEvent args)
     {
         RefreshState(uid, comp);
     }
