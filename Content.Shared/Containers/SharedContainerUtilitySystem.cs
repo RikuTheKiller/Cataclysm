@@ -7,48 +7,49 @@ public sealed partial class SharedContainerUtilitySystem : EntitySystem
     /// <summary>
     /// Enumerates over all contents within the entity.
     /// </summary>
-    public IEnumerable<EntityUid> GetContents(EntityUid entity)
+    public IEnumerable<EntityUid> GetContents(EntityUid rootEntity)
     {
-        if (!TryComp<ContainerManagerComponent>(entity, out var containerManager))
+        if (!TryComp<ContainerManagerComponent>(rootEntity, out var containerManager))
             yield break;
 
-        List<EntityUid> stack = new();
+        Stack<EntityUid> stack = new();
 
         foreach (var container in containerManager.Containers.Values)
-            stack.AddRange(container.ContainedEntities);
+            foreach (var containedEntity in container.ContainedEntities)
+                stack.Push(containedEntity);
 
-        while (stack.Count > 0)
+        while (stack.TryPop(out var entity))
         {
-            entity = stack[^1];
-            stack.RemoveAt(stack.Count - 1);
             yield return entity;
 
             if (!TryComp(entity, out containerManager))
                 continue;
 
             foreach (var container in containerManager.Containers.Values)
-                stack.AddRange(container.ContainedEntities);
+                foreach (var containedEntity in container.ContainedEntities)
+                    stack.Push(containedEntity);
         }
     }
 
     /// <summary>
     /// Enumerates over the entity and all contents within the entity.
     /// </summary>
-    public IEnumerable<EntityUid> GetContentsAndSelf(EntityUid entity)
+    public IEnumerable<EntityUid> GetContentsAndSelf(EntityUid rootEntity)
     {
-        List<EntityUid> stack = new() { entity };
+        Stack<EntityUid> stack = new();
 
-        while (stack.Count > 0)
+        stack.Push(rootEntity);
+
+        while (stack.TryPop(out var entity))
         {
-            entity = stack[^1];
-            stack.RemoveAt(stack.Count - 1);
             yield return entity;
 
             if (!TryComp<ContainerManagerComponent>(entity, out var containerManager))
                 continue;
 
             foreach (var container in containerManager.Containers.Values)
-                stack.AddRange(container.ContainedEntities);
+                foreach (var containedEntity in container.ContainedEntities)
+                    stack.Push(containedEntity);
         }
     }
 }

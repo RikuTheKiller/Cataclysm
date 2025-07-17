@@ -4,10 +4,20 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.StorageMarket.BUI;
 
 [NetSerializable, Serializable]
-public sealed class StorageMarketComputerInterfaceState(List<StorageMarketEntry> entries) : BoundUserInterfaceState
+public sealed class StorageMarketComputerInterfaceState(List<StorageMarketEntry> entries, List<StorageMarketEntry> buyCart, List<StorageMarketEntry> sellCart) : BoundUserInterfaceState
 {
     /// <summary>
-    /// A snapshot of the market entries available for trade on the connected storage net.
+    /// The market entries available for trade on the connected storage net.
     /// </summary>
-    public readonly List<StorageMarketEntry> Entries = entries;
+    public List<StorageMarketEntry> Entries = entries;
+
+    /// <summary>
+    /// The market entries currently in the buy cart.
+    /// </summary>
+    public List<StorageMarketEntry> BuyCart = buyCart;
+
+    /// <summary>
+    /// The market entries currently in the sell cart.
+    /// </summary>
+    public List<StorageMarketEntry> SellCart = sellCart;
 }

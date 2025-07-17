@@ -21,6 +21,7 @@ public sealed partial class StorageMarketSystem : EntitySystem
     [Dependency] private readonly ContainerSystem _containerSystem = default!;
     [Dependency] private readonly SharedContainerUtilitySystem _sharedContainerUtilitiesSystem = default!;
     [Dependency] private readonly StorageNetSystem _storageNetSystem = default!;
+    [Dependency] private readonly UserInterfaceSystem _userInterfaceSystem = default!;
 
     public override void Initialize()
     {
