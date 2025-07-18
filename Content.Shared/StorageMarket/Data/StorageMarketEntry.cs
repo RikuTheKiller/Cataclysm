@@ -6,32 +6,32 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.StorageMarket.Data;
 
 [NetSerializable, Serializable]
-public readonly struct StorageMarketEntry(StorageEntryPrototype prototype, int basePrice, int quantity, bool isCraftable) : IComparable<StorageMarketEntry>
+public sealed class StorageMarketEntry(StorageEntryPrototype prototype, int basePrice, int quantity, bool isCraftable) : IComparable<StorageMarketEntry>
 {
     [ViewVariables]
-    public readonly EntProtoId? Prototype = prototype.Prototype;
+    public EntProtoId? Prototype = prototype.Prototype;
 
     [ViewVariables]
-    public readonly ProtoId<StackPrototype>? StackPrototype = prototype.StackPrototype;
+    public ProtoId<StackPrototype>? StackPrototype = prototype.StackPrototype;
 
     [ViewVariables]
-    public readonly StorageMarketCategories Categories = prototype.Categories;
+    public StorageMarketCategories Categories = prototype.Categories;
 
     [ViewVariables]
-    public readonly StorageMarketDepartments Departments = prototype.Departments;
+    public StorageMarketDepartments Departments = prototype.Departments;
 
     [ViewVariables]
-    public readonly int BasePrice = basePrice;
+    public int BasePrice = basePrice;
 
     [ViewVariables]
-    public readonly int Quantity = quantity;
+    public int Quantity = quantity;
 
     [ViewVariables]
-    public readonly bool IsCraftable = isCraftable;
+    public bool IsCraftable = isCraftable;
 
-    public int CompareTo(StorageMarketEntry other)
+    public int CompareTo(StorageMarketEntry? other)
     {
-        return string.Compare(ToString(), other.ToString(), StringComparison.OrdinalIgnoreCase);
+        return string.Compare(ToString(), other?.ToString(), StringComparison.OrdinalIgnoreCase);
     }
 
     public override string ToString()

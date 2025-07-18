@@ -1,4 +1,5 @@
 using Content.Client.StorageMarket.UI;
+using Robust.Client.UserInterface;
 
 namespace Content.Client.StorageMarket.BUI;
 
@@ -10,14 +11,6 @@ public sealed class StorageMarketComputerBoundUserInterface(EntityUid owner, Enu
     {
         base.Open();
 
-        _menu = new();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-
-        if (disposing)
-            _menu?.Dispose();
+        _menu = this.CreateWindow<StorageMarketMenu>();
     }
 }

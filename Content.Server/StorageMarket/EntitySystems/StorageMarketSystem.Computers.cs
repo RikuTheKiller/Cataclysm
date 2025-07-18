@@ -57,7 +57,7 @@ public sealed partial class StorageMarketSystem : EntitySystem
 
         foreach (var protoId in net.ControllerData.MarketData.Entries)
             if (TryCreateEntry(protoId, net, out var entry))
-                entries.Add(entry.Value);
+                entries.Add(entry);
 
         entries.Sort(); // This sorts the entries in OrdinalIgnoreCase (basically case-insensitive alphabetical) order.
 
