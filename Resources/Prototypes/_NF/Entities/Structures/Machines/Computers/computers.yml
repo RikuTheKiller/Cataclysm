@@ -127,6 +127,33 @@
     board: Null
 
 - type: entity
+  name: storage market computer
+  parent: [BaseComputer]
+  id: StorageMarketComputer
+  description: Used to exchange goods with a storage market.
+  components:
+  - type: Sprite
+    layers:
+    - map: ["computerLayerBody"]
+      state: computer
+    - map: ["computerLayerKeyboard"]
+      state: generic_keyboard
+    - map: ["computerLayerScreen"]
+      sprite: _NF/Structures/Machines/computers.rsi
+      state: cargo_market
+    - map: ["computerLayerKeys"]
+      state: tech_key
+  - type: StorageMarketComputer
+  - type: ActivatableUI
+    key: enum.StorageMarketComputerUiKey.Default
+  - type: UserInterface
+    interfaces:
+      enum.StorageMarketComputerUiKey.Default:
+        type: StorageMarketComputerBoundUserInterface
+  - type: Computer
+    board: Null
+
+- type: entity
   parent: ComputerShuttle
   id: ComputerShuttleAntag
   categories: [ HideSpawnMenu ]

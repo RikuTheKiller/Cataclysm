@@ -12,6 +12,6 @@ public sealed partial class MaterialStorageContainerComponent : Component
     /// <summary>
     /// Per-type capacity for materials. 1 sheet uses roughly 100 capacity.
     /// </summary>
-    [ViewVariables, DataField(required: true)]
+    [DataField(required: true)]
     public int Capacity;
 }

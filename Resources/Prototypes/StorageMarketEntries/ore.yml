@@ -1,5 +1,0 @@
-- type: storageMarketEntry
-  id: Steel
-  stackPrototype: SteelOre
-  categories: Ore
-  departments: Industrial
