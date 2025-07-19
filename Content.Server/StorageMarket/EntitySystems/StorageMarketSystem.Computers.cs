@@ -1,14 +1,14 @@
-using Content.Shared.StorageMarket.Prototypes;
 using Content.Server.StorageSys.Components;
 using Content.Shared.StorageMarket.BUI;
 using Content.Shared.StorageMarket.Data;
 using Robust.Shared.Prototypes;
 using System.Diagnostics.CodeAnalysis;
 using Content.Server.StorageSys.NodeGroups;
+using Content.Shared.Stacks;
 
 namespace Content.Server.StorageMarket.EntitySystems;
 
-public sealed partial class StorageMarketSystem : EntitySystem
+public sealed partial class StorageMarketSystem
 {
     public void InitializeComputers()
     {
@@ -17,63 +17,94 @@ public sealed partial class StorageMarketSystem : EntitySystem
 
     private void OnComputerUIOpened(EntityUid uid, StorageMarketComputerComponent comp, BoundUIOpenedEvent args)
     {
-        RefreshEntries(uid, comp);
-        RefreshState(uid, comp);
+        RefreshState((uid, comp));
     }
 
-    public void RefreshState(EntityUid uid, StorageMarketComputerComponent? computer = null)
+    private void RefreshState(Entity<StorageMarketComputerComponent?> computer)
     {
-        if (!Resolve(uid, ref computer))
-            return;
+        if (!_userInterfaceSystem.TryGetUiState<StorageMarketComputerInterfaceState>(computer.Owner, StorageMarketComputerUiKey.Default, out var state))
+            state = new();
 
-        StorageMarketComputerInterfaceState state = new(computer.Entries, computer.BuyCart, computer.SellCart);
+        state.Stock = GetStock(computer);
+        state.SellCart = GetSellCart(computer);
+        state.BuyCart = GetBuyCart(state); // Must be called after updating 'state.Stock'
 
-        _userInterfaceSystem.SetUiState(uid, StorageMarketComputerUiKey.Default, state);
+        _userInterfaceSystem.SetUiState(computer.Owner, StorageMarketComputerUiKey.Default, state);
     }
 
-    public void RefreshEntries(EntityUid uid, StorageMarketComputerComponent? computer = null)
+    private Dictionary<EntProtoId, StorageMarketStockUiEntry> GetStock(Entity<StorageMarketComputerComponent?> computer)
     {
-        if (!Resolve(uid, ref computer))
-            return;
-
-        if (TryGetEntries((uid, computer), out var entries))
-            computer.Entries = entries;
-        else
-            computer.Entries.Clear();
-    }
-
-    public bool TryGetEntries(Entity<StorageMarketComputerComponent?> entity, [NotNullWhen(true)] out List<StorageMarketEntry>? entries)
-    {
-        entries = null;
-
-        if (!Resolve(entity, ref entity.Comp))
-            return false;
-        if (!_storageNetSystem.TryGetStorageNet(entity, out var net))
-            return false;
+        if (!TryGetStorageNet(computer, out var net))
+            return new();
         if (net.ControllerData == null)
-            return false;
+            return new();
 
-        entries = new();
+        Dictionary<EntProtoId, StorageMarketStockUiEntry> entries = new();
 
-        foreach (var protoId in net.ControllerData.MarketData.Entries)
-            if (TryCreateEntry(protoId, net, out var entry))
+        foreach (var entry in net.ControllerData.MarketData.Stock.Values)
+            if (PrototypeManager.TryIndex(entry.Prototype, out var entryPrototype))
+                entries.Add(entryPrototype.EntityPrototype, GetStockUiEntry(entry, net));
+
+        return entries;
+    }
+
+    private StorageMarketStockUiEntry GetStockUiEntry(StorageMarketStockEntry entry, StorageNet net)
+    {
+        return new(
+            entry: entry,
+            basePrice: GetBasePrice(entry.Prototype),
+            quantity: _storageNetSystem.GetEntryCount(entry.Prototype, net),
+            isCraftable: true // Demagificy later
+        );
+    }
+
+    private List<StorageMarketSellCartEntry> GetSellCart(Entity<StorageMarketComputerComponent?> computer)
+    {
+        List<StorageMarketSellCartEntry> entries = new();
+
+        foreach (var sellable in GetSellables(computer))
+            if (TryGetSellCartEntry(sellable, out var entry))
                 entries.Add(entry);
 
-        entries.Sort(); // This sorts the entries in OrdinalIgnoreCase (basically case-insensitive alphabetical) order.
+        return entries;
+    }
+
+    private bool TryGetSellCartEntry(Entity<StorageMarketComputerComponent?> computer, [NotNullWhen(true)] out StorageMarketSellCartEntry? entry)
+    {
+        entry = null;
+
+        if (!TryComp(computer, out MetaDataComponent? metaData))
+            return false;
+        if (metaData.EntityPrototype == null)
+            return false;
+
+        entry = new(
+            prototype: metaData.EntityPrototype,
+            quantity: TryComp<StackComponent>(computer, out var stack) ? stack.Count : 1
+        );
 
         return true;
     }
 
-    public bool TryCreateEntry(ProtoId<StorageEntryPrototype> protoId, StorageNet net, [NotNullWhen(true)] out StorageMarketEntry? entry)
+    private List<StorageMarketBuyCartEntry> GetBuyCart(StorageMarketComputerInterfaceState state)
     {
-        entry = null;
+        List<StorageMarketBuyCartEntry> validEntries = new();
 
-        if (!_prototypeManager.TryIndex(protoId, out var entryPrototype))
+        foreach (var entry in state.BuyCart)
+            if (TryValidateBuyCartEntry(entry, state))
+                validEntries.Add(entry);
+
+        return validEntries;
+    }
+
+    private bool TryValidateBuyCartEntry(StorageMarketBuyCartEntry entry, StorageMarketComputerInterfaceState state)
+    {
+        if (!PrototypeManager.TryIndex(entry.Prototype, out var entryPrototype))
             return false;
-        if (entryPrototype.Prototype == null && entryPrototype.StackPrototype == null)
+        if (!state.Stock.TryGetValue(entryPrototype.EntityPrototype, out var uiEntry))
             return false;
 
-        entry = new(entryPrototype, GetBasePrice(entryPrototype), _storageNetSystem.GetEntryCount(protoId, net), false);
+        entry.Quantity = Math.Max(entry.Quantity, uiEntry.Quantity);
         return true;
     }
 }

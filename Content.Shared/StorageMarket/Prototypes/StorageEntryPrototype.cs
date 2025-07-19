@@ -1,4 +1,3 @@
-using Content.Shared.Stacks;
 using Content.Shared.StorageMarket.Data;
 using Robust.Shared.Prototypes;
 
@@ -10,11 +9,8 @@ public sealed partial class StorageEntryPrototype : IPrototype
     [ViewVariables, IdDataField]
     public string ID { get; private set; } = default!;
 
-    [DataField]
-    public EntProtoId? Prototype { get; private set; }
-
-    [DataField]
-    public ProtoId<StackPrototype>? StackPrototype { get; private set; }
+    [DataField(required: true)]
+    public EntProtoId EntityPrototype { get; private set; }
 
     [DataField(required: true)]
     public StorageMarketCategories Categories { get; private set; }

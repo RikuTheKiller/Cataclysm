@@ -46,6 +46,17 @@ public sealed partial class StorageNetSystem : EntitySystem
     }
 
     /// <summary>
+    /// Returns true if net is not null, otherwise returns TryGetStorageNet(entity, out net)
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="net"></param>
+    /// <returns></returns>
+    public bool ResolveStorageNet(EntityUid entity, [NotNullWhen(true)] ref StorageNet? net)
+    {
+        return net != null || TryGetStorageNet(entity, out net);
+    }
+
+    /// <summary>
     /// Wrapper for 'RaiseLocalEvent(uid, args)'
     /// </summary>
     public void RaiseStorageNetLoadNodeEvent(EntityUid uid, StorageNetLoadNodeEvent args)

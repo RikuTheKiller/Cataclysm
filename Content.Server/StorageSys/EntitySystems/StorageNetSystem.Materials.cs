@@ -7,7 +7,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server.StorageSys.EntitySystems;
 
-public sealed partial class StorageNetSystem : EntitySystem
+public sealed partial class StorageNetSystem
 {
     private void InitializeMaterials()
     {

@@ -8,7 +8,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server.StorageSys.EntitySystems;
 
-public sealed partial class StorageNetSystem : EntitySystem
+public sealed partial class StorageNetSystem
 {
     private void InitializeItems()
     {
@@ -76,41 +76,17 @@ public sealed partial class StorageNetSystem : EntitySystem
             return 0;
         if (!_prototypeManager.TryIndex(entry, out var entryPrototype))
             return 0;
-
-        if (entryPrototype.Prototype != null)
-            return GetItemMaxCount(entryPrototype.Prototype.Value, container);
-        if (entryPrototype.StackPrototype != null)
-            return GetStackMaxCount(entryPrototype.StackPrototype.Value, container);
-
-        return 0;
-    }
-
-    private int GetItemMaxCount(EntProtoId protoId, ItemStorageContainerComponent container)
-    {
-        if (!_prototypeManager.TryIndex(protoId, out var itemPrototype))
+        if (!_prototypeManager.TryIndex(entryPrototype.EntityPrototype, out var entityPrototype))
             return 0;
-        if (!itemPrototype.TryGetComponent<ItemComponent>(out var itemComponent, _componentFactory))
+        if (!entityPrototype.TryGetComponent<ItemComponent>(out var itemComponent, _componentFactory))
             return 0;
         if (!_prototypeManager.TryIndex(itemComponent.Size, out var sizePrototype))
             return 0;
 
-        return container.Capacity / sizePrototype.Weight;
-    }
-
-    private int GetStackMaxCount(ProtoId<StackPrototype> protoId, ItemStorageContainerComponent container)
-    {
-        if (!_prototypeManager.TryIndex(protoId, out var stackPrototype))
-            return 0;
-        if (!_prototypeManager.TryIndex(stackPrototype.Spawn, out var itemPrototype))
-            return 0;
-        if (!itemPrototype.TryGetComponent<ItemComponent>(out var itemComponent, _componentFactory))
-            return 0;
-        if (!itemPrototype.TryGetComponent<StackComponent>(out var stackComponent, _componentFactory))
-            return 0;
-        if (!_prototypeManager.TryIndex(itemComponent.Size, out var sizePrototype))
-            return 0;
-
-        return container.Capacity * _stackSystem.GetMaxCount(stackComponent) / sizePrototype.Weight;
+        if (entityPrototype.TryGetComponent<StackComponent>(out var stackComponent, _componentFactory))
+            return container.Capacity * _stackSystem.GetMaxCount(stackComponent) / sizePrototype.Weight;
+        else
+            return container.Capacity / sizePrototype.Weight;
     }
 
     public int TryChangeEntryCount(ProtoId<StorageEntryPrototype> entry, int amount, StorageNet net)

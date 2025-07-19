@@ -1,23 +1,24 @@
 using Content.Shared.StorageMarket.Data;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.StorageMarket.BUI;
 
 [NetSerializable, Serializable]
-public sealed class StorageMarketComputerInterfaceState(List<StorageMarketEntry> entries, List<StorageMarketEntry> buyCart, List<StorageMarketEntry> sellCart) : BoundUserInterfaceState
+public sealed class StorageMarketComputerInterfaceState : BoundUserInterfaceState
 {
     /// <summary>
     /// The market entries available for trade on the connected storage net.
     /// </summary>
-    public List<StorageMarketEntry> Entries = entries;
+    public Dictionary<EntProtoId, StorageMarketStockUiEntry> Stock = new();
 
     /// <summary>
     /// The market entries currently in the buy cart.
     /// </summary>
-    public List<StorageMarketEntry> BuyCart = buyCart;
+    public List<StorageMarketBuyCartEntry> BuyCart = new();
 
     /// <summary>
     /// The market entries currently in the sell cart.
     /// </summary>
-    public List<StorageMarketEntry> SellCart = sellCart;
+    public List<StorageMarketSellCartEntry> SellCart = new();
 }

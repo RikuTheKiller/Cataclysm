@@ -8,7 +8,7 @@ using Content.Shared.Power;
 
 namespace Content.Server.StorageSys.EntitySystems;
 
-public sealed partial class StorageNetSystem : EntitySystem
+public sealed partial class StorageNetSystem
 {
     private void InitializeControllers()
     {
