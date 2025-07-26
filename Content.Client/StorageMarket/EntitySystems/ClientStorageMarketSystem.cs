@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Content.Shared.Stacks;
 using Content.Shared.StorageMarket.EntitySystems;
 using Content.Shared.StorageMarket.Prototypes;
 using Robust.Client.GameObjects;
@@ -23,7 +24,7 @@ public sealed partial class ClientStorageMarketSystem : SharedStorageMarketSyste
 
         name = entityPrototype.Name;
 
-        if (entryPrototype.StackPrototype != null && PrototypeManager.TryIndex(entryPrototype.StackPrototype, out var stackPrototype) && stackPrototype.Icon != null)
+        if (entityPrototype.TryGetComponent<StackComponent>(out var stack, ComponentFactory) && PrototypeManager.TryIndex<StackPrototype>(stack.StackTypeId, out var stackPrototype) && stackPrototype.Icon != null)
             icon = _spriteSystem.Frame0(stackPrototype.Icon);
         else if (entityPrototype.TryGetComponent<SpriteComponent>(out var sprite, ComponentFactory) && sprite.Icon != null)
             icon = sprite.Icon.Default;

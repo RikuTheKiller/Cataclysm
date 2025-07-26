@@ -1,0 +1,16 @@
+storage-market-console-menu-title = Storage Market Computer
+storage-market-item-title = Item
+storage-market-all = All
+storage-market-purchase = Purchase
+storage-market-quantity-title = Quantity
+storage-market-quantity-available = $1 available
+storage-market-purchase-cart-button = Purchase Cart: $
+storage-market-price = Price
+storage-market-bank-balance = Account Balance:
+storage-market-cart-balance = ${$cost} (+${$cratecost} transaction costs)
+storage-market-cart-prefix = Cart:
+storage-market-no-bank-found = No bank account.
+storage-market-return-button = Remove
+storage-market-search = Search for items:
+storage-market-no-crate-machine-available = No available crate machines
+storage-market-insufficient-funds = Insufficient funds

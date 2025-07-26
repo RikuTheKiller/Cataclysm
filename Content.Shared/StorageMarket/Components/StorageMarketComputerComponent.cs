@@ -1,10 +1,9 @@
-using Content.Shared.StorageMarket.Data;
-using Content.Shared.StorageMarket.Prototypes;
-using Robust.Shared.Prototypes;
+using Content.Shared.StorageMarket.EntitySystems;
+using Robust.Shared.GameStates;
 
-namespace Content.Server.StorageSys.Components;
+namespace Content.Shared.StorageMarket.Components;
 
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent]
 public sealed partial class StorageMarketComputerComponent : Component
 {
     /// <summary>

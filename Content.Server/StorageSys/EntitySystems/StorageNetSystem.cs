@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Content.Server.NodeContainer;
 using Content.Server.Power.EntitySystems;
 using Content.Server.Stack;
+using Content.Server.StorageMarket.EntitySystems;
 using Content.Server.StorageSys.Events;
 using Content.Server.StorageSys.NodeGroups;
 using Robust.Server.Containers;
@@ -17,6 +18,7 @@ public sealed partial class StorageNetSystem : EntitySystem
     [Dependency] private readonly StackSystem _stackSystem = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IComponentFactory _componentFactory = default!;
+    [Dependency] private readonly StorageMarketSystem _storageMarketSystem = default!;
 
     public override void Initialize()
     {
@@ -57,18 +59,20 @@ public sealed partial class StorageNetSystem : EntitySystem
     }
 
     /// <summary>
-    /// Wrapper for 'RaiseLocalEvent(uid, args)'
+    /// Handles loading a node for a StorageNet on the StorageNetSystem side.
     /// </summary>
-    public void RaiseStorageNetLoadNodeEvent(EntityUid uid, StorageNetLoadNodeEvent args)
+    public void StorageNetLoadNode(EntityUid uid, StorageNetLoadNodeEvent args)
     {
+        args.Node.LoadedNet = args.Net;
         RaiseLocalEvent(uid, args);
     }
 
     /// <summary>
-    /// Wrapper for 'RaiseLocalEvent(uid, args)'
+    /// Handles removing a node for a StorageNet on the StorageNetSystem side.
     /// </summary>
-    public void RaiseStorageNetRemoveNodeEvent(EntityUid uid, StorageNetRemoveNodeEvent args)
+    public void StorageNetRemoveNode(EntityUid uid, StorageNetRemoveNodeEvent args)
     {
+        args.Node.LoadedNet = null;
         RaiseLocalEvent(uid, args);
     }
 }

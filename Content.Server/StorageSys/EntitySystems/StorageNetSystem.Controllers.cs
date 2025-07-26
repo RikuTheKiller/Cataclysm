@@ -3,7 +3,7 @@ using Content.Server.StorageSys.Components;
 using Content.Server.StorageSys.Events;
 using Content.Server.StorageSys.NodeGroups;
 using Robust.Shared.Containers;
-using Content.Shared.StorageSys.Components;
+using Content.Shared.StorageMarket.Components;
 using Content.Shared.Power;
 
 namespace Content.Server.StorageSys.EntitySystems;
@@ -12,7 +12,7 @@ public sealed partial class StorageNetSystem
 {
     private void InitializeControllers()
     {
-        SubscribeLocalEvent<StorageControllerComponent, ComponentStartup>(OnStorageControllerStartup);
+        SubscribeLocalEvent<StorageControllerComponent, MapInitEvent>(OnStorageControllerMapInit);
 
         SubscribeLocalEvent<StorageControllerComponent, StorageNetLoadNodeEvent>(OnStorageControllerLoadNode);
         SubscribeLocalEvent<StorageControllerComponent, StorageNetRemoveNodeEvent>(OnStorageControllerRemoveNode);
@@ -21,11 +21,13 @@ public sealed partial class StorageNetSystem
         SubscribeLocalEvent<StorageControllerComponent, EntRemovedFromContainerMessage>(OnStorageControllerContainerRemove);
 
         SubscribeLocalEvent<StorageControllerComponent, PowerChangedEvent>(OnStorageControllerPowerChanged);
+
+        SubscribeLocalEvent<StorageControllerDriveComponent, ComponentInit>(OnStorageControllerDriveInit);
     }
 
-    private void OnStorageControllerStartup(EntityUid uid, StorageControllerComponent comp, ComponentStartup args)
+    private void OnStorageControllerMapInit(EntityUid uid, StorageControllerComponent comp, MapInitEvent args)
     {
-        SpawnInContainerOrDrop(comp.DriveSlotPrototype, uid, StorageControllerComponent.DriveSlotName);
+        SpawnInContainerOrDrop(comp.DrivePrototype, uid, StorageControllerComponent.DriveSlotName);
     }
 
     private void OnStorageControllerLoadNode(EntityUid uid, StorageControllerComponent comp, StorageNetLoadNodeEvent args)
@@ -61,12 +63,9 @@ public sealed partial class StorageNetSystem
 
         _sharedAppearanceSystem.SetData(uid, StorageControllerVisuals.Drive, false);
 
-        if (!TryGetStorageNet(uid, out var net))
-            return;
-
         // Uses the lower-level disconnect method since the drive is no longer in the controller.
         // This means TryDisconnectControllerDrive(uid) would fail to find the drive.
-        TryDisconnectControllerDrive(net, drive);
+        TryDisconnectControllerDrive(drive);
     }
 
     private void OnStorageControllerPowerChanged(EntityUid uid, StorageControllerComponent comp, PowerChangedEvent args)
@@ -75,6 +74,11 @@ public sealed partial class StorageNetSystem
             TryConnectControllerDrive(uid);
         else
             TryDisconnectControllerDrive(uid);
+    }
+
+    private void OnStorageControllerDriveInit(EntityUid uid, StorageControllerDriveComponent comp, ComponentInit args)
+    {
+        _storageMarketSystem.PopulateStock(uid, comp);
     }
 
     /// <summary>
@@ -98,12 +102,10 @@ public sealed partial class StorageNetSystem
     /// </summary>
     public void TryDisconnectControllerDrive(EntityUid uid)
     {
-        if (!TryGetStorageNet(uid, out var net))
-            return;
         if (!TryGetControllerDrive(uid, out var drive))
             return;
 
-        TryDisconnectControllerDrive(net, drive);
+        TryDisconnectControllerDrive(drive);
     }
 
     public void TryConnectControllerDrive(StorageNet net, StorageControllerDriveComponent drive)
@@ -117,13 +119,15 @@ public sealed partial class StorageNetSystem
         drive.ConnectedNet = net;
     }
 
-    public void TryDisconnectControllerDrive(StorageNet net, StorageControllerDriveComponent drive)
+    public void TryDisconnectControllerDrive(StorageControllerDriveComponent drive)
     {
-        if (drive.ConnectedNet != net)
+        if (drive.ConnectedNet == null)
             return;
 
+        var net = drive.ConnectedNet;
+
         if (net.ControllerData != null)
-            drive.Data = new(net.ControllerData);
+            drive.Data = new(net.ControllerData); // Copy the data. If the net can still hold data, we don't want to reference it.
 
         drive.ConnectedNet = null;
 

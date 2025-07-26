@@ -1,0 +1,5 @@
+- type: storageEntry
+  id: SteelOre
+  entityPrototype: SteelOre1
+  categories: Ore
+  departments: Industrial

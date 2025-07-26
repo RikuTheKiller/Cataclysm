@@ -90,3 +90,24 @@
     layers:
     - state: storage_controller_drive
   - type: StorageControllerDrive
+
+- type: entity
+  parent: StorageController
+  id: StorageControllerDebug
+  name: debug storage controller
+  description: Blood, sweat and tears.
+  components:
+  - type: StorageController
+    drivePrototype: StorageControllerDriveDebug
+
+- type: entity
+  parent: StorageControllerDrive
+  id: StorageControllerDriveDebug
+  name: debug storage controller drive
+  description: Contains stock requests for literally every storage entry in the game.
+  components:
+  - type: StorageControllerDrive
+    initialMarketStockWhitelist:
+      !type:StorageMarketWhitelist
+      allowedCategories: All
+      allowedDepartments: All

@@ -1,15 +1,20 @@
-using System.Diagnostics.CodeAnalysis;
-using Content.Shared.StorageMarket.Data;
-using Content.Shared.StorageMarket.Prototypes;
+using Content.Shared.StorageMarket.Entries;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.StorageMarket.EntitySystems;
 
-[Virtual]
-public partial class SharedStorageMarketSystem : EntitySystem
+public abstract partial class SharedStorageMarketSystem : EntitySystem
 {
     [Dependency] protected readonly IPrototypeManager PrototypeManager = default!;
     [Dependency] protected readonly IComponentFactory ComponentFactory = default!;
+    [Dependency] protected readonly SharedUserInterfaceSystem SharedUserInterfaceSystem = default!;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        InitializeComputers();
+    }
 
     public int GetSinglePrice(StorageMarketStockUiEntry entry)
     {

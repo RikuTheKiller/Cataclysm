@@ -5,8 +5,7 @@ using Robust.Shared.Map.Components;
 
 namespace Content.Server.StorageSys.Nodes;
 
-[DataDefinition]
-public sealed partial class StorageDuctNode : Node, IStoragePassiveNode
+public sealed partial class StorageDuctNode : StoragePassiveNode
 {
     public override IEnumerable<Node> GetReachableNodes(TransformComponent xform, EntityQuery<NodeContainerComponent> nodeQuery, EntityQuery<TransformComponent> xformQuery, MapGridComponent? grid, IEntityManager entMan)
     {

@@ -1,5 +1,6 @@
 using Content.Shared.StorageMarket.Data;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
 namespace Content.Shared.StorageMarket.Prototypes;
 
@@ -12,9 +13,9 @@ public sealed partial class StorageEntryPrototype : IPrototype
     [DataField(required: true)]
     public EntProtoId EntityPrototype { get; private set; }
 
-    [DataField(required: true)]
-    public StorageMarketCategories Categories { get; private set; }
+    [DataField(required: true, customTypeSerializer: typeof(FlagSerializer<StorageMarketCategory>))]
+    public int Categories { get; private set; }
 
-    [DataField(required: true)]
-    public StorageMarketDepartments Departments { get; private set; }
+    [DataField(required: true, customTypeSerializer: typeof(FlagSerializer<StorageMarketDepartment>))]
+    public int Departments { get; private set; }
 }

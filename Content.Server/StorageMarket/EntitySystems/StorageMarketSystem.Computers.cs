@@ -1,17 +1,19 @@
-using Content.Server.StorageSys.Components;
 using Content.Shared.StorageMarket.BUI;
-using Content.Shared.StorageMarket.Data;
+using Content.Shared.StorageMarket.Entries;
 using Robust.Shared.Prototypes;
 using System.Diagnostics.CodeAnalysis;
 using Content.Server.StorageSys.NodeGroups;
 using Content.Shared.Stacks;
+using Content.Shared.StorageMarket.Components;
 
 namespace Content.Server.StorageMarket.EntitySystems;
 
 public sealed partial class StorageMarketSystem
 {
-    public void InitializeComputers()
+    public override void InitializeComputers()
     {
+        base.InitializeComputers();
+
         SubscribeLocalEvent<StorageMarketComputerComponent, BoundUIOpenedEvent>(OnComputerUIOpened);
     }
 
@@ -22,14 +24,13 @@ public sealed partial class StorageMarketSystem
 
     private void RefreshState(Entity<StorageMarketComputerComponent?> computer)
     {
-        if (!_userInterfaceSystem.TryGetUiState<StorageMarketComputerInterfaceState>(computer.Owner, StorageMarketComputerUiKey.Default, out var state))
-            state = new();
+        var state = GetMarketComputerUiState(computer);
 
         state.Stock = GetStock(computer);
         state.SellCart = GetSellCart(computer);
         state.BuyCart = GetBuyCart(state); // Must be called after updating 'state.Stock'
 
-        _userInterfaceSystem.SetUiState(computer.Owner, StorageMarketComputerUiKey.Default, state);
+        SetMarketComputerUiState(computer, state);
     }
 
     private Dictionary<EntProtoId, StorageMarketStockUiEntry> GetStock(Entity<StorageMarketComputerComponent?> computer)

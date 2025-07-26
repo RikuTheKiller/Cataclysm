@@ -2,10 +2,10 @@ using Content.Shared.StorageMarket.Prototypes;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared.StorageMarket.Data;
+namespace Content.Shared.StorageMarket.Entries;
 
 [NetSerializable, Serializable]
-public class StorageMarketStockUiEntry(StorageMarketStockEntry entry, int basePrice, int quantity, bool isCraftable) : IComparable<StorageMarketStockUiEntry>
+public sealed class StorageMarketStockUiEntry(StorageMarketStockEntry entry, int basePrice, int quantity, bool isCraftable) : IComparable<StorageMarketStockUiEntry>
 {
     [ViewVariables]
     public ProtoId<StorageEntryPrototype> Prototype = entry.Prototype;

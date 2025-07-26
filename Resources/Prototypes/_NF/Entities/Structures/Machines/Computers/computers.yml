@@ -152,6 +152,12 @@
         type: StorageMarketComputerBoundUserInterface
   - type: Computer
     board: Null
+  - type: NodeContainer
+    nodes:
+      storage:
+        !type:StorageDeviceNode
+        nodeGroupID: Storage
+
 
 - type: entity
   parent: ComputerShuttle
@@ -227,11 +233,6 @@
     mod: 1
   - type: Computer
     board: Null
-  - type: NodeContainer
-    nodes:
-      storage:
-        !type:StorageDeviceNode
-        nodeGroupID: Storage
 
 - type: entity
   name: cargo market computer

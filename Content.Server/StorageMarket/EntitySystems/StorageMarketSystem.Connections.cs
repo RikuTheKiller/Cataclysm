@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Content.Server.StorageMarket.Components;
-using Content.Server.StorageSys.Components;
 using Content.Server.StorageSys.NodeGroups;
 using Content.Shared._NF.CrateMachine.Components;
+using Content.Shared.StorageMarket.Components;
 
 namespace Content.Server.StorageMarket.EntitySystems;
 
@@ -46,7 +46,7 @@ public sealed partial class StorageMarketSystem
 
         foreach (var rootSellableUid in _entityLookupSystem.GetEntitiesIntersecting(pallet, LookupFlags.Dynamic | LookupFlags.Sundries))
         {
-            foreach (var sellableUid in _sharedContainerUtilitiesSystem.GetContentsAndSelf(rootSellableUid))
+            foreach (var sellableUid in _sharedContainerUtilitySystem.GetContentsAndSelf(rootSellableUid))
             {
                 if (!TryComp(sellableUid, out TransformComponent? sellableTransform))
                     continue;
@@ -85,8 +85,8 @@ public sealed partial class StorageMarketSystem
         return _storageNetSystem.TryGetStorageNet(entity, out net);
     }
 
-    public bool Resolve(EntityUid entity, [NotNullWhen(true)] ref StorageNet? net)
+    public bool ResolveStorageNet(EntityUid entity, [NotNullWhen(true)] ref StorageNet? net)
     {
-        return net != null || TryGetStorageNet(entity, out net);
+        return _storageNetSystem.ResolveStorageNet(entity, ref net);
     }
 }

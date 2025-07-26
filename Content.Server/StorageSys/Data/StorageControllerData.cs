@@ -4,6 +4,7 @@ namespace Content.Server.StorageSys.Data;
 
 public sealed class StorageControllerData
 {
+    [ViewVariables]
     public StorageMarketData MarketData;
 
     public StorageControllerData()

@@ -2,7 +2,7 @@ using Content.Shared.StorageMarket.Prototypes;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared.StorageMarket.Data;
+namespace Content.Shared.StorageMarket.Entries;
 
 [NetSerializable, Serializable]
 public sealed class StorageMarketBuyCartEntry(ProtoId<StorageEntryPrototype> prototype, int quantity)
