@@ -36,12 +36,7 @@ public sealed partial class StorageMarketSystem
         if (!TryComp<PhysicalCompositionComponent>(uid, out var physicalComposition))
             return 0;
 
-        var price = GetBasePrice(physicalComposition);
-
-        if (TryComp<StackComponent>(uid, out var stack))
-            price *= stack.Count;
-
-        return price;
+        return GetBasePrice(physicalComposition);
     }
 
     public int GetBasePrice(PhysicalCompositionComponent physicalComposition)

@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using Content.Server.StorageSys.NodeGroups;
 using Content.Shared.Stacks;
 using Content.Shared.StorageMarket.Components;
+using Content.Shared.StorageMarket.Prototypes;
 
 namespace Content.Server.StorageMarket.EntitySystems;
 
@@ -49,7 +50,7 @@ public sealed partial class StorageMarketSystem
         return entries;
     }
 
-    private StorageMarketStockUiEntry GetStockUiEntry(StorageMarketStockEntry entry, StorageNet net)
+    private StorageMarketStockUiEntry GetStockUiEntry(StorageMarketItemStockEntry entry, StorageNet net)
     {
         return new(
             entry: entry,
@@ -59,9 +60,9 @@ public sealed partial class StorageMarketSystem
         );
     }
 
-    private List<StorageMarketSellCartEntry> GetSellCart(Entity<StorageMarketComputerComponent?> computer)
+    private List<StorageMarketSellCartUiEntry> GetSellCart(Entity<StorageMarketComputerComponent?> computer)
     {
-        List<StorageMarketSellCartEntry> entries = new();
+        List<StorageMarketSellCartUiEntry> entries = new();
 
         foreach (var sellable in GetSellables(computer))
             if (TryGetSellCartEntry(sellable, out var entry))
@@ -70,7 +71,7 @@ public sealed partial class StorageMarketSystem
         return entries;
     }
 
-    private bool TryGetSellCartEntry(Entity<StorageMarketComputerComponent?> computer, [NotNullWhen(true)] out StorageMarketSellCartEntry? entry)
+    private bool TryGetSellCartEntry(Entity<StorageMarketComputerComponent?> computer, [NotNullWhen(true)] out StorageMarketSellCartUiEntry? entry)
     {
         entry = null;
 
@@ -81,15 +82,16 @@ public sealed partial class StorageMarketSystem
 
         entry = new(
             prototype: metaData.EntityPrototype,
+            basePrice: GetBasePrice(metaData.EntityPrototype),
             quantity: TryComp<StackComponent>(computer, out var stack) ? stack.Count : 1
         );
 
         return true;
     }
 
-    private List<StorageMarketBuyCartEntry> GetBuyCart(StorageMarketComputerInterfaceState state)
+    private List<StorageMarketBuyCartUiEntry> GetBuyCart(StorageMarketComputerInterfaceState state)
     {
-        List<StorageMarketBuyCartEntry> validEntries = new();
+        List<StorageMarketBuyCartUiEntry> validEntries = new();
 
         foreach (var entry in state.BuyCart)
             if (TryValidateBuyCartEntry(entry, state))
@@ -98,14 +100,14 @@ public sealed partial class StorageMarketSystem
         return validEntries;
     }
 
-    private bool TryValidateBuyCartEntry(StorageMarketBuyCartEntry entry, StorageMarketComputerInterfaceState state)
+    private bool TryValidateBuyCartEntry(StorageMarketBuyCartUiEntry entry, StorageMarketComputerInterfaceState state)
     {
         if (!PrototypeManager.TryIndex(entry.Prototype, out var entryPrototype))
             return false;
         if (!state.Stock.TryGetValue(entryPrototype.EntityPrototype, out var uiEntry))
             return false;
 
-        entry.Quantity = Math.Max(entry.Quantity, uiEntry.Quantity);
+        entry.Quantity = Math.Max(entry.Quantity, uiEntry.StockCount);
         return true;
     }
 }

@@ -3,3 +3,9 @@
   entityPrototype: SteelOre1
   categories: Ore
   departments: Industrial
+
+- type: storageEntry
+  id: GoldOre
+  entityPrototype: GoldOre1
+  categories: Ore
+  departments: Industrial

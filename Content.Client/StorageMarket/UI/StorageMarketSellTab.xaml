@@ -49,7 +49,7 @@
                     VerticalExpand="True"
                     VScrollEnabled="True">
                     <BoxContainer
-                        Name="BuyStock"
+                        Name="Stock"
                         Orientation="Vertical"
                         HorizontalExpand="True"
                         VerticalExpand="True"

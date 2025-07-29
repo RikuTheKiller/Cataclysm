@@ -19,7 +19,16 @@ public sealed partial class ClientStorageMarketSystem : SharedStorageMarketSyste
 
         if (!PrototypeManager.TryIndex(protoId, out var entryPrototype))
             return false;
-        if (!PrototypeManager.TryIndex(entryPrototype.EntityPrototype, out var entityPrototype))
+
+        return TryGetVisuals(entryPrototype.EntityPrototype, out name, out icon);
+    }
+
+    public bool TryGetVisuals(EntProtoId protoId, [NotNullWhen(true)] out string? name, [NotNullWhen(true)] out Texture? icon)
+    {
+        name = null;
+        icon = null;
+
+        if (!PrototypeManager.TryIndex(protoId, out var entityPrototype))
             return false;
 
         name = entityPrototype.Name;

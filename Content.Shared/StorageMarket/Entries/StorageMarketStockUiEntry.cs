@@ -5,7 +5,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.StorageMarket.Entries;
 
 [NetSerializable, Serializable]
-public sealed class StorageMarketStockUiEntry(StorageMarketStockEntry entry, int basePrice, int quantity, bool isCraftable) : IComparable<StorageMarketStockUiEntry>
+public sealed class StorageMarketStockUiEntry(StorageMarketItemStockEntry entry, int basePrice, int quantity, bool isCraftable) : IComparable<StorageMarketStockUiEntry>
 {
     [ViewVariables]
     public ProtoId<StorageEntryPrototype> Prototype = entry.Prototype;
@@ -23,7 +23,7 @@ public sealed class StorageMarketStockUiEntry(StorageMarketStockEntry entry, int
     public int BasePrice = basePrice;
 
     [ViewVariables]
-    public int Quantity = quantity;
+    public int StockCount = quantity;
 
     [ViewVariables]
     public bool IsCraftable = isCraftable;

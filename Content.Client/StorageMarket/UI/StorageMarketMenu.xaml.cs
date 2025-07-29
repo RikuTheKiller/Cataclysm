@@ -50,6 +50,7 @@ public sealed partial class StorageMarketMenu : FancyWindow
     public void UpdateState(StorageMarketComputerInterfaceState state)
     {
         BuyTab.UpdateState(state);
+        SellTab.UpdateState(state);
         SetVisibleTab(state.Tab);
     }
 

@@ -72,6 +72,7 @@
   - type: IconSmooth
     key: cargo_pallet_sell
     base: cargo_pallet_sell_
+  - type: StorageMarketSellPallet
 
 - type: entity
   id: CargoPalletBuy

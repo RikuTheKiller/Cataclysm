@@ -1,5 +1,6 @@
 using Content.Shared.StorageMarket.Data;
 using Content.Shared.StorageMarket.Entries;
+using Content.Shared.StorageMarket.Prototypes;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
@@ -16,12 +17,12 @@ public sealed class StorageMarketComputerInterfaceState : BoundUserInterfaceStat
     /// <summary>
     /// The market entries currently in the buy cart.
     /// </summary>
-    public List<StorageMarketBuyCartEntry> BuyCart = new();
+    public List<StorageMarketBuyCartUiEntry> BuyCart = new();
 
     /// <summary>
     /// The market entries currently in the sell cart.
     /// </summary>
-    public List<StorageMarketSellCartEntry> SellCart = new();
+    public List<StorageMarketSellCartUiEntry> SellCart = new();
 
     /// <summary>
     /// The tab currently visible in the market menu.
